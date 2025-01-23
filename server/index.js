@@ -61,6 +61,31 @@ app.get("/users", (req, res) => {
     });
 });
 
+app.get("/tasks/:id", (req, res) => {
+  const _id = req.params.id;
+
+  Task.findById(_id)
+    .then((tasks) => {
+      if (!tasks) {
+        return res.status(404).send(tasks);
+      }
+      res.status(200).send(tasks);
+    })
+    .catch((error) => {
+      res.status(400).send({ error: error.message });
+    });
+});
+
+app.get("/tasks", (req, res) => {
+  Task.find({})
+    .then((tasks) => {
+      res.status(200).send(tasks);
+    })
+    .catch((error) => {
+      res.status(404).send({ error: error.message });
+    });
+});
+
 app.listen(port, () => {
   console.log("The server is online on port: " + port);
 });
