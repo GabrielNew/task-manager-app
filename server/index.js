@@ -138,6 +138,35 @@ app.patch("/tasks/:id", async (req, res) => {
   }
 });
 
+// Delete documents endpoints
+app.delete("/users/:id", async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+
+    if (!user) {
+      res.status(404).send();
+    }
+
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+app.delete("/tasks/:id", async (req, res) => {
+  try {
+    const task = await Task.findByIdAndDelete(req.params.id);
+
+    if (!task) {
+      return res.status(404).send();
+    }
+
+    res.status(200).send(task);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
 app.listen(port, () => {
   console.log("The server is online on port: " + port);
 });
