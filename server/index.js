@@ -11,79 +11,74 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.post("/users", (req, res) => {
+// Create endpoints
+app.post("/users", async (req, res) => {
   const user = new User(req.body);
-  user
-    .save()
-    .then(() => {
-      res.status(201).send(user);
-    })
-    .catch((error) => {
-      res.status(400).send({ error: error.message });
-    });
+
+  try {
+    await user.save();
+    res.status(201).send(user);
+  } catch (error) {
+    res.status(400).send(error);
+  }
 });
 
-app.post("/tasks", (req, res) => {
+app.post("/tasks", async (req, res) => {
   const task = new Task(req.body);
-  task
-    .save()
-    .then(() => {
-      res.status(201).send(task);
-    })
-    .catch((error) => {
-      res.status(400).send({ error: error.message });
-    });
+
+  try {
+    await task.save();
+    res.status(201).send(task);
+  } catch (error) {
+    res.status(400).send(error);
+  }
 });
 
-app.get("/users/:id", (req, res) => {
+// Search by id endpoints
+app.get("/users/:id", async (req, res) => {
   const _id = req.params.id;
-
-  User.findById(_id)
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send();
-      }
-
-      res.send(user);
-    })
-    .catch((error) => {
-      res.status(400).send({ error: error.message });
-    });
+  try {
+    const user = await User.findById(_id);
+    if (!user) {
+      return res.status(404).send();
+    }
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send(error);
+  }
 });
 
-app.get("/users", (req, res) => {
-  User.find({})
-    .then((users) => {
-      res.send(users);
-    })
-    .catch((error) => {
-      res.status(500).send({ error: error.message });
-    });
-});
-
-app.get("/tasks/:id", (req, res) => {
+app.get("/tasks/:id", async (req, res) => {
   const _id = req.params.id;
+  try {
+    const task = await Task.findById(_id);
+    if (!task) {
+      return res.status(404).send();
+    }
 
-  Task.findById(_id)
-    .then((tasks) => {
-      if (!tasks) {
-        return res.status(404).send(tasks);
-      }
-      res.status(200).send(tasks);
-    })
-    .catch((error) => {
-      res.status(400).send({ error: error.message });
-    });
+    res.status(200).send(task);
+  } catch (error) {
+    res.status(500).send(error);
+  }
 });
 
-app.get("/tasks", (req, res) => {
-  Task.find({})
-    .then((tasks) => {
-      res.status(200).send(tasks);
-    })
-    .catch((error) => {
-      res.status(404).send({ error: error.message });
-    });
+// Search all documents endpoints
+app.get("/users", async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+app.get("/tasks", async (req, res) => {
+  try {
+    const tasks = await Task.find({});
+    res.status(200).send(tasks);
+  } catch (error) {
+    res.status(500).send(error);
+  }
 });
 
 app.listen(port, () => {
