@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+const { AUTH_KEY } = process.env;
 
 const UserSchema = mongoose.Schema({
   name: { type: String, required: true, trim: true },
@@ -49,6 +50,7 @@ const UserSchema = mongoose.Schema({
 
 UserSchema.methods.generateAuthToken = async function () {
   const user = this;
+  //console.log(AUTH_KEY);
   const token = jwt.sign({ _id: user._id.toString() }, "test");
 
   user.tokens = user.tokens.concat({ token });

@@ -1,5 +1,6 @@
 import express from "express";
 import { User } from "../models/User.js";
+import { auth } from "../middleware/auth.js";
 
 const userRouter = new express.Router();
 
@@ -30,6 +31,10 @@ userRouter.post("/users/login", async (req, res) => {
   }
 });
 
+userRouter.get("/users/me", auth, async (req, res) => {
+  res.send(req.user);
+});
+
 userRouter.get("/users/:id", async (req, res) => {
   const _id = req.params.id;
   try {
@@ -38,15 +43,6 @@ userRouter.get("/users/:id", async (req, res) => {
       return res.status(404).send();
     }
     res.status(200).send(user);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
-
-userRouter.get("/users", async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.status(200).send(users);
   } catch (error) {
     res.status(500).send(error);
   }
