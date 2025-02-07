@@ -1,5 +1,6 @@
 import express from "express";
 import { User } from "../models/User.js";
+import { Task } from "../models/Task.js";
 import { auth } from "../middleware/auth.js";
 
 const userRouter = new express.Router();
@@ -89,6 +90,7 @@ userRouter.patch("/users/me", auth, async (req, res) => {
 
 userRouter.delete("/users/me", auth, async (req, res) => {
   try {
+    await Task.deleteMany({ owner: req.user._id.toString() });
     await req.user.deleteOne();
     res.status(200).send(req.user);
   } catch (error) {

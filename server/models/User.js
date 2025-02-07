@@ -4,49 +4,54 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 const { AUTH_KEY } = process.env;
 
-const UserSchema = mongoose.Schema({
-  name: { type: String, required: true, trim: true },
-  email: {
-    type: String,
-    unique: true,
-    required: true,
-    trim: true,
-    lowercase: true,
-    validade(value) {
-      if (!validator.isEmail(value)) {
-        throw new Error("Email is invalid");
-      }
-    },
-  },
-  age: {
-    type: Number,
-    default: 18,
-    validade(value) {
-      if (value < 0) {
-        throw new Error("Age must be a positive number");
-      }
-    },
-  },
-  password: {
-    type: String,
-    required: true,
-    trim: true,
-    minLength: 7,
-    validade(value) {
-      if (value.toLowerCase().contains("password")) {
-        throw new Error("This password is too insecure");
-      }
-    },
-  },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true,
+const UserSchema = mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+      trim: true,
+      lowercase: true,
+      validade(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Email is invalid");
+        }
       },
     },
-  ],
-});
+    age: {
+      type: Number,
+      default: 18,
+      validade(value) {
+        if (value < 0) {
+          throw new Error("Age must be a positive number");
+        }
+      },
+    },
+    password: {
+      type: String,
+      required: true,
+      trim: true,
+      minLength: 7,
+      validade(value) {
+        if (value.toLowerCase().contains("password")) {
+          throw new Error("This password is too insecure");
+        }
+      },
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
 UserSchema.methods.toJSON = function () {
   const user = this;
