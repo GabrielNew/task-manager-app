@@ -50,6 +50,8 @@ const UserSchema = mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
 
@@ -65,7 +67,6 @@ UserSchema.methods.toJSON = function () {
 
 UserSchema.methods.generateAuthToken = async function () {
   const user = this;
-  //console.log(AUTH_KEY);
   const token = jwt.sign({ _id: user._id.toString() }, "test");
 
   user.tokens = user.tokens.concat({ token });
@@ -99,6 +100,12 @@ UserSchema.pre("save", async function (next) {
   }
 
   next();
+});
+
+UserSchema.virtual("tasks", {
+  ref: "task",
+  localField: "_id",
+  foreignField: "owner",
 });
 
 const User = new mongoose.model("user", UserSchema);

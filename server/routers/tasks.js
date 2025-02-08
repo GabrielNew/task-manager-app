@@ -30,10 +30,21 @@ taskRouter.get("/tasks/:id", auth, async (req, res) => {
 });
 
 taskRouter.get("/tasks", auth, async (req, res) => {
+  const match = {};
+
+  if (req.query.completed) {
+    match.completed = req.query.completed === "true";
+  }
+
   try {
-    const tasks = await Task.find({ owner: req.user._id });
+    const tasks = await req.user.populate({
+      path: "tasks",
+      match,
+    });
+    //const tasks = await Task.find({ owner: req.user._id });
     res.status(200).send(tasks);
   } catch (error) {
+    console.log(error);
     res.status(500).send(error);
   }
 });
