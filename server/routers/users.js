@@ -2,6 +2,7 @@ import express from "express";
 import { User } from "../models/User.js";
 import { Task } from "../models/Task.js";
 import { auth } from "../middleware/auth.js";
+import { sendEmail } from "../emails/account.js";
 import multer from "multer";
 import sharp from "sharp";
 
@@ -32,6 +33,11 @@ userRouter.post("/users", async (req, res) => {
   try {
     await user.save();
     const token = await user.generateAuthToken();
+    sendEmail(
+      user.email,
+      "Welcome",
+      `Welcome, ${user.name}! We're glad to have you on board. Let us know if you need anything!`
+    );
     res.status(201).send({ user, token });
   } catch (error) {
     res.status(400).send(error);
@@ -113,6 +119,11 @@ userRouter.delete("/users/me", auth, async (req, res) => {
   try {
     await Task.deleteMany({ owner: req.user._id.toString() });
     await req.user.deleteOne();
+    sendEmail(
+      req.user.email,
+      "Account deleted",
+      `We're sorry that our app didn't meet your expectations, ${req.user.name}. If there's anything we can do better, we'd love to hear your feedback!`
+    );
     res.status(200).send(req.user);
   } catch (error) {
     res.status(500).send(error);
