@@ -5,3 +5,4 @@ This is an app made with an udemy course, to learn NodeJs.
 
 * [Nodejs](https://nodejs.org/en) - Open source server environment
 * [Mongoose](https://mongoosejs.com/) - Module for Node.js applications that allows manipulate MongoDB documents
+* [MongoDB](https://www.mongodb.com/) - Database to store the users and tasks
